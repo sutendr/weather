@@ -4,6 +4,7 @@ url = "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.76&da
 
 response = requests.get(url)
 
-print(response.json())
 
+data = response.json()
 
+print(data["daily"]['temperature_2m_max'][0])
