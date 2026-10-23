@@ -15,10 +15,13 @@ max_temp = daily["temperature_2m_max"][0]
 min_temp = daily["temperature_2m_min"][0]
 rain = daily["precipitation_probability_max"][0]
 code = daily["weather_code"][0]
+RAIN_THRESHOLD = 50
 
 weather = WEATHER_CODE.get(code, "不明")
 
 print(f"{daily['time'][0]} 東京：最高気温 {max_temp}℃ /最低気温 {min_temp}℃ /降水確率{rain}% /天気：{weather}")
 
 for i in range(len(times)):
-    print(f"{times[i]} {probs[i]}%")
+    if probs[i] >= RAIN_THRESHOLD:
+        print(f"{times[i][11:]} {probs[i]}%")
+
