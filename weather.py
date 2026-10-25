@@ -18,23 +18,26 @@ def get_rain_hours(times,probs,threshold):
             rain_hours.append(f"{times[i][11:]} {probs[i]}%")
     return rain_hours
 
-data = fetch_weather()
+def main():
+    data = fetch_weather()
+    daily = data["daily"]
+    hourly = data["hourly"]
+    times = hourly["time"]
+    probs = hourly["precipitation_probability"]
+    max_temp = daily["temperature_2m_max"][0]
+    min_temp = daily["temperature_2m_min"][0]
+    rain = daily["precipitation_probability_max"][0]
+    code = daily["weather_code"][0]
+
+    weather = WEATHER_CODE.get(code, "不明")
+
+    print(f"{daily['time'][0]} 東京：最高気温 {max_temp}℃ /最低気温 {min_temp}℃ /降水確率{rain}% /天気：{weather}")
+
+    rain_hours = get_rain_hours(times, probs, RAIN_THRESHOLD)
+
+    for hour in rain_hours:
+        print(hour)
 
 
-daily = data["daily"]
-hourly = data["hourly"]
-times = hourly["time"]
-probs = hourly["precipitation_probability"]
-max_temp = daily["temperature_2m_max"][0]
-min_temp = daily["temperature_2m_min"][0]
-rain = daily["precipitation_probability_max"][0]
-code = daily["weather_code"][0]
-
-weather = WEATHER_CODE.get(code, "不明")
-
-print(f"{daily['time'][0]} 東京：最高気温 {max_temp}℃ /最低気温 {min_temp}℃ /降水確率{rain}% /天気：{weather}")
-
-rain_hours = get_rain_hours(times, probs, RAIN_THRESHOLD)
-
-for hour in rain_hours:
-    print(hour)
+if __name__ == "__main__":
+    main()
