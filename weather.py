@@ -11,7 +11,15 @@ def fetch_weather():
     data = response.json()
     return data
 
+def get_rain_hours(times,probs,threshold):
+    rain_hours = []
+    for i in range(len(times)):
+        if probs[i] >= threshold:
+            rain_hours.append(f"{times[i][11:]} {probs[i]}%")
+    return rain_hours
+
 data = fetch_weather()
+
 
 daily = data["daily"]
 hourly = data["hourly"]
@@ -26,7 +34,7 @@ weather = WEATHER_CODE.get(code, "不明")
 
 print(f"{daily['time'][0]} 東京：最高気温 {max_temp}℃ /最低気温 {min_temp}℃ /降水確率{rain}% /天気：{weather}")
 
-for i in range(len(times)):
-    if probs[i] >= RAIN_THRESHOLD:
-        print(f"{times[i][11:]} {probs[i]}%")
+rain_hours = get_rain_hours(times, probs, RAIN_THRESHOLD)
 
+for hour in rain_hours:
+    print(hour)
