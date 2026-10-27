@@ -1,4 +1,5 @@
 import requests
+import sys
 
 url = "https://api.open-meteo.com/v1/forecast"
 
@@ -20,7 +21,12 @@ def get_rain_hours(times,probs,threshold):
     return rain_hours
 
 def main():
-    data = fetch_weather()
+    try:
+        data = fetch_weather()
+    except requests.exceptions.RequestException as e:
+        print (f"天気の取得に失敗しました:{e}")
+        sys.exit(1)
+    
     daily = data["daily"]
     hourly = data["hourly"]
     times = hourly["time"]
