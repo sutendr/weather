@@ -7,7 +7,7 @@ RAIN_THRESHOLD = 50
 
 def fetch_weather():
     params = {"latitude" : 35.68 , "longitude" :139.76 , "daily" : ["temperature_2m_max" , "temperature_2m_min" , "precipitation_probability_max" , "weather_code"] , "hourly" : ["precipitation_probability"] , "timezone" : "Asia/Tokyo" , "forecast_days" :1}
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params, timeout=10)
     data = response.json()
     return data
 
