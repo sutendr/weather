@@ -1,5 +1,6 @@
 import requests
 import sys
+import argparse
 
 url = "https://api.open-meteo.com/v1/forecast"
 
@@ -21,6 +22,9 @@ def get_rain_hours(times,probs,threshold):
     return rain_hours
 
 def main():
+    parser = argparse.ArgumentParser(description="降雨情報を通知するプログラム")
+    parser.add_argument("--threshold", type=int, default=RAIN_THRESHOLD,help="雨とみなす降水確率（%%）初期値：%(default)s%%")
+    args = parser.parse_args()
     try:
         data = fetch_weather()
     except requests.exceptions.RequestException as e:
@@ -40,7 +44,7 @@ def main():
 
     print(f"{daily['time'][0]} 東京：最高気温 {max_temp}℃ /最低気温 {min_temp}℃ /降水確率{rain}% /天気：{weather}")
 
-    rain_hours = get_rain_hours(times, probs, RAIN_THRESHOLD)
+    rain_hours = get_rain_hours(times, probs, args.threshold)
 
     for hour in rain_hours:
         print(hour)
