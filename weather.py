@@ -24,6 +24,7 @@ def get_rain_hours(times,probs,threshold):
 def main():
     parser = argparse.ArgumentParser(description="降雨情報を通知するプログラム")
     parser.add_argument("--threshold", type=int, default=RAIN_THRESHOLD,help="雨とみなす降水確率（%%）初期値：%(default)s%%")
+    parser.add_argument("--always", action="store_true", help="雨の時間がなくても必ず表示する")
     args = parser.parse_args()
     try:
         data = fetch_weather()
@@ -41,14 +42,17 @@ def main():
     code = daily["weather_code"][0]
 
     weather = WEATHER_CODE.get(code, "不明")
+    rain_hours = get_rain_hours(times, probs, args.threshold)
+    if not rain_hours and not args.always:
+        return
 
     print(f"{daily['time'][0]} 東京：最高気温 {max_temp}℃ /最低気温 {min_temp}℃ /降水確率{rain}% /天気：{weather}")
 
-    rain_hours = get_rain_hours(times, probs, args.threshold)
-
-    for hour in rain_hours:
-        print(hour)
-
+    if rain_hours:
+        for hour in rain_hours:
+            print(hour)
+    else:
+        print("雨の予報はありません")
 
 if __name__ == "__main__":
     main()
