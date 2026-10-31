@@ -56,13 +56,24 @@ def main():
     if not rain_hours and not args.always:
         return
 
-    print(f"{daily['time'][0]} 東京：最高気温 {max_temp}℃ /最低気温 {min_temp}℃ /降水確率{rain}% /天気：{weather}")
+    lines = []
+    lines.append(f"{daily['time'][0]} 東京：最高気温 {max_temp}℃ /最低気温 {min_temp}℃ /降水確率{rain}% /天気：{weather}")
 
     if rain_hours:
         for hour in rain_hours:
-            print(hour)
+            lines.append(hour)
     else:
-        print("雨の予報はありません")
+        lines.append("雨の予報はありません")
+
+    message = "\n".join(lines)
+
+    print(message)
+
+    try:
+        send_discord(webhook_url, message)
+    except requests.exceptions.RequestException:
+        print("Discord への送信に失敗しました")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
