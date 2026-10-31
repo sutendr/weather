@@ -23,6 +23,10 @@ def get_rain_hours(times,probs,threshold):
             rain_hours.append(f"{times[i][11:]} {probs[i]}%")
     return rain_hours
 
+def send_discord(webhook_url, message):
+    response = requests.post(webhook_url,json={"content": message}, timeout=10)
+    response.raise_for_status()
+
 def main():
     parser = argparse.ArgumentParser(description="降雨情報を通知するプログラム")
     parser.add_argument("--threshold", type=int, default=RAIN_THRESHOLD,help="雨とみなす降水確率（%%）初期値：%(default)s%%")
@@ -47,7 +51,6 @@ def main():
     min_temp = daily["temperature_2m_min"][0]
     rain = daily["precipitation_probability_max"][0]
     code = daily["weather_code"][0]
-
     weather = WEATHER_CODE.get(code, "不明")
     rain_hours = get_rain_hours(times, probs, args.threshold)
     if not rain_hours and not args.always:
