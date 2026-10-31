@@ -1,6 +1,8 @@
 import requests
 import sys
 import argparse
+import os
+from dotenv import load_dotenv
 
 url = "https://api.open-meteo.com/v1/forecast"
 
@@ -26,6 +28,11 @@ def main():
     parser.add_argument("--threshold", type=int, default=RAIN_THRESHOLD,help="雨とみなす降水確率（%%）初期値：%(default)s%%")
     parser.add_argument("--always", action="store_true", help="雨の時間がなくても必ず表示する")
     args = parser.parse_args()
+    load_dotenv()
+    webhook_url = os.environ.get("DISCORD_WEBHOOK_URL")
+    if not webhook_url:
+        print("DISCORD_WEBHOOK_URL が設定されていません（.env を確認してください）")
+        sys.exit(1)
     try:
         data = fetch_weather()
     except requests.exceptions.RequestException as e:
