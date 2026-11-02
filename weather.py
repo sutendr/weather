@@ -10,13 +10,13 @@ WEATHER_CODE = {0: "快晴", 1: "晴れ", 2: "一部曇り", 3: "曇り", 45: "�
 RAIN_THRESHOLD = 50
 
 def fetch_weather():
-    params = {"latitude": 35.68, "longitude": 139.76, "daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_probability_max", "weather_code"], "hourly": ["precipitation_probability"], "timezone": "Asia/Tokyo", "forecast_days" :1}
+    params = {"latitude": 35.68, "longitude": 139.76, "daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_probability_max", "weather_code"], "hourly": ["precipitation_probability"], "timezone": "Asia/Tokyo", "forecast_days": 1}
     response = requests.get(URL, params=params, timeout=10)
     response.raise_for_status()
     data = response.json()
     return data
 
-def get_rain_hours(times,probs,threshold):
+def get_rain_hours(times, probs, threshold):
     rain_hours = []
     for i in range(len(times)):
         if probs[i] >= threshold:
@@ -24,12 +24,12 @@ def get_rain_hours(times,probs,threshold):
     return rain_hours
 
 def send_discord(webhook_url, message):
-    response = requests.post(webhook_url,json={"content": message}, timeout=10)
+    response = requests.post(webhook_url, json={"content": message}, timeout=10)
     response.raise_for_status()
 
 def main():
     parser = argparse.ArgumentParser(description="降雨情報を通知するプログラム")
-    parser.add_argument("--threshold", type=int, default=RAIN_THRESHOLD,help="雨とみなす降水確率（%%）初期値：%(default)s%%")
+    parser.add_argument("--threshold", type=int, default=RAIN_THRESHOLD, help="雨とみなす降水確率（%%）初期値：%(default)s%%")
     parser.add_argument("--always", action="store_true", help="雨の時間がない日も、天気・気温・降水確率を通知する")
     args = parser.parse_args()
     load_dotenv()
