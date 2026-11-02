@@ -4,14 +4,14 @@ import argparse
 import os
 from dotenv import load_dotenv
 
-url = "https://api.open-meteo.com/v1/forecast"
+URL = "https://api.open-meteo.com/v1/forecast"
 
-WEATHER_CODE = {0 : "快晴" , 1 : "晴れ" , 2 : "一部曇り" , 3 : "曇り" , 45 : "霧" ,48 : "霧氷" ,  51 : "弱い霧雨" , 53 : "霧雨" , 55 : "強い霧雨" , 61 : "小雨" , 63 : "雨" , 65 : "強い雨" , 71 : "小雪" , 73 : "雪" , 75 : "大雪" , 80 : "弱いにわか雨" , 81 : "にわか雨" , 82 : "激しいにわか雨" , 95 : "雷雨"}
+WEATHER_CODE = {0: "快晴", 1: "晴れ", 2: "一部曇り", 3: "曇り", 45: "霧", 48: "霧氷", 51: "弱い霧雨", 53: "霧雨", 55: "強い霧雨", 61: "小雨", 63: "雨", 65: "強い雨", 71: "小雪", 73: "雪", 75: "大雪", 80: "弱いにわか雨", 81: "にわか雨", 82: "激しいにわか雨", 95: "雷雨"}
 RAIN_THRESHOLD = 50
 
 def fetch_weather():
-    params = {"latitude" : 35.68 , "longitude" :139.76 , "daily" : ["temperature_2m_max" , "temperature_2m_min" , "precipitation_probability_max" , "weather_code"] , "hourly" : ["precipitation_probability"] , "timezone" : "Asia/Tokyo" , "forecast_days" :1}
-    response = requests.get(url, params=params, timeout=10)
+    params = {"latitude": 35.68, "longitude": 139.76, "daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_probability_max", "weather_code"], "hourly": ["precipitation_probability"], "timezone": "Asia/Tokyo", "forecast_days" :1}
+    response = requests.get(URL, params=params, timeout=10)
     response.raise_for_status()
     data = response.json()
     return data
@@ -30,7 +30,7 @@ def send_discord(webhook_url, message):
 def main():
     parser = argparse.ArgumentParser(description="降雨情報を通知するプログラム")
     parser.add_argument("--threshold", type=int, default=RAIN_THRESHOLD,help="雨とみなす降水確率（%%）初期値：%(default)s%%")
-    parser.add_argument("--always", action="store_true", help="雨の時間がなくても必ず表示する")
+    parser.add_argument("--always", action="store_true", help="雨の時間がない日も、天気・気温・降水確率を通知する")
     args = parser.parse_args()
     load_dotenv()
     webhook_url = os.environ.get("DISCORD_WEBHOOK_URL")
@@ -40,7 +40,7 @@ def main():
     try:
         data = fetch_weather()
     except requests.exceptions.RequestException as e:
-        print (f"天気の取得に失敗しました:{e}")
+        print(f"天気の取得に失敗しました:{e}")
         sys.exit(1)
     
     daily = data["daily"]
