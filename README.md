@@ -56,7 +56,7 @@ GitHub
 
 ## セットアップ
 ```bash
-git clone git@github.com:sutendr/weather.git
+git clone https://github.com/sutendr/weather.git
 cd weather
 python3 -m venv .venv
 source .venv/bin/activate
